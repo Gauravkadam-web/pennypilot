@@ -1,0 +1,488 @@
+{
+  "info": {
+    "_postman_id": "pennypilot-v1-collection",
+    "name": "PennyPilot V1",
+    "description": "PennyPilot V1 — Core Expense Tracker API. Full CRUD + filtering + summary endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "{{baseUrl}}"
+    }
+  ],
+  "item": [
+    {
+      "name": "Expenses",
+      "item": [
+        {
+          "name": "1. Create Expense",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Response has id', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.be.a('number');",
+                  "    pm.environment.set('expenseId', json.id);",
+                  "});",
+                  "pm.test('Category matches', function () {",
+                  "    pm.expect(pm.response.json().category).to.eql('FOOD');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Grocery Shopping\",\n  \"amount\": 1250.50,\n  \"category\": \"FOOD\",\n  \"expenseDate\": \"2026-08-20\",\n  \"description\": \"Weekly groceries\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses", "host": ["{{baseUrl}}"], "path": ["api", "v1", "expenses"] }
+          }
+        },
+        {
+          "name": "2. Create Expense — Validation Error (empty title)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('fieldErrors is present', function () {",
+                  "    pm.expect(pm.response.json().fieldErrors).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"\",\n  \"amount\": 1250.50,\n  \"category\": \"FOOD\",\n  \"expenseDate\": \"2026-08-20\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses", "host": ["{{baseUrl}}"], "path": ["api", "v1", "expenses"] }
+          }
+        },
+        {
+          "name": "3. Create Expense — Validation Error (negative amount)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Bad Expense\",\n  \"amount\": -100,\n  \"category\": \"FOOD\",\n  \"expenseDate\": \"2026-08-20\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses", "host": ["{{baseUrl}}"], "path": ["api", "v1", "expenses"] }
+          }
+        },
+        {
+          "name": "4. Create Expense — Validation Error (future date)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Future Expense\",\n  \"amount\": 500,\n  \"category\": \"FOOD\",\n  \"expenseDate\": \"2099-01-01\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses", "host": ["{{baseUrl}}"], "path": ["api", "v1", "expenses"] }
+          }
+        },
+        {
+          "name": "5. List All Expenses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses", "host": ["{{baseUrl}}"], "path": ["api", "v1", "expenses"] }
+          }
+        },
+        {
+          "name": "6. List Expenses — Filter by Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('All results are FOOD category', function () {",
+                  "    pm.response.json().forEach(function(e) {",
+                  "        pm.expect(e.category).to.eql('FOOD');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses?category=FOOD",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses"],
+              "query": [{ "key": "category", "value": "FOOD" }]
+            }
+          }
+        },
+        {
+          "name": "7. List Expenses — Filter by Date Range",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses?startDate=2026-08-01&endDate=2026-08-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses"],
+              "query": [
+                { "key": "startDate", "value": "2026-08-01" },
+                { "key": "endDate", "value": "2026-08-31" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "8. List Expenses — Filter by Category + Date Range",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses?category=FOOD&startDate=2026-08-01&endDate=2026-08-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses"],
+              "query": [
+                { "key": "category", "value": "FOOD" },
+                { "key": "startDate", "value": "2026-08-01" },
+                { "key": "endDate", "value": "2026-08-31" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "9. Get Expense by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('ID matches', function () {",
+                  "    pm.expect(pm.response.json().id).to.eql(parseInt(pm.environment.get('expenseId')));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses/{{expenseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses", "{{expenseId}}"]
+            }
+          }
+        },
+        {
+          "name": "10. Get Expense by ID — Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Error message present', function () {",
+                  "    pm.expect(pm.response.json().message).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses", "999999"]
+            }
+          }
+        },
+        {
+          "name": "11. Update Expense",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Title was updated', function () {",
+                  "    pm.expect(pm.response.json().title).to.eql('Grocery Shopping - Updated');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Grocery Shopping - Updated\",\n  \"amount\": 1300.00,\n  \"category\": \"FOOD\",\n  \"expenseDate\": \"2026-08-20\",\n  \"description\": \"Weekly groceries + snacks\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses/{{expenseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses", "{{expenseId}}"]
+            }
+          }
+        },
+        {
+          "name": "12. Update Expense — Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Ghost Expense\",\n  \"amount\": 100.00,\n  \"category\": \"OTHER\",\n  \"expenseDate\": \"2026-08-01\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses", "999999"]
+            }
+          }
+        },
+        {
+          "name": "13. Expense Summary (no filters)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('totalAmount is a number', function () {",
+                  "    pm.expect(pm.response.json().totalAmount).to.be.a('number');",
+                  "});",
+                  "pm.test('totalCount is a number', function () {",
+                  "    pm.expect(pm.response.json().totalCount).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses", "summary"]
+            }
+          }
+        },
+        {
+          "name": "14. Expense Summary — Filter by Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses/summary?category=FOOD",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses", "summary"],
+              "query": [{ "key": "category", "value": "FOOD" }]
+            }
+          }
+        },
+        {
+          "name": "15. Expense Summary — Filter by Date Range",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses/summary?startDate=2026-08-01&endDate=2026-08-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses", "summary"],
+              "query": [
+                { "key": "startDate", "value": "2026-08-01" },
+                { "key": "endDate", "value": "2026-08-31" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "16. Delete Expense",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses/{{expenseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses", "{{expenseId}}"]
+            }
+          }
+        },
+        {
+          "name": "17. Delete Expense — Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "expenses", "999999"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
