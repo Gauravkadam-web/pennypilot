@@ -1,0 +1,139 @@
+/* frontend/src/styles/variables.css
+   PennyPilot Design System v1.0 — translated directly from DESIGN_SYSTEM.md */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ─── Brand & Neutrals — Light ─────────────────────────── */
+  --color-primary:         #4F46E5;
+  --color-primary-hover:   #4338CA;
+  --color-primary-active:  #3730A3;
+  --color-primary-subtle:  #EEF2FF;
+
+  --color-bg-canvas:        #F7F8FA;
+  --color-bg-surface:       #FFFFFF;
+  --color-bg-surface-raised:#FFFFFF;
+  --color-bg-muted:         #F1F2F5;
+
+  --color-border:           #E4E6EB;
+  --color-border-strong:    #D0D3D9;
+
+  --color-text-primary:     #111827;
+  --color-text-secondary:   #4B5563;
+  --color-text-muted:       #8A8F98;
+  --color-text-on-primary:  #FFFFFF;
+
+  /* ─── Semantic / Financial ──────────────────────────────── */
+  --color-positive:         #16A34A;
+  --color-positive-subtle:  #F0FDF4;
+  --color-negative:         #DC2626;
+  --color-negative-subtle:  #FEF2F2;
+  --color-warning:          #D97706;
+  --color-warning-subtle:   #FFFBEB;
+  --color-info:             #2563EB;
+  --color-info-subtle:      #EFF6FF;
+
+  /* ─── Category Colors ───────────────────────────────────── */
+  --color-cat-food:          #F59E0B;
+  --color-cat-transport:     #3B82F6;
+  --color-cat-shopping:      #EC4899;
+  --color-cat-bills:         #8B5CF6;
+  --color-cat-health:        #10B981;
+  --color-cat-entertainment: #F43F5E;
+  --color-cat-other:         #6B7280;
+
+  /* ─── Typography ────────────────────────────────────────── */
+  --font-family-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* ─── Spacing (4px base) ─────────────────────────────────── */
+  --space-1:  4px;  --space-2:  8px;  --space-3: 12px;  --space-4: 16px;
+  --space-5: 20px;  --space-6: 24px;  --space-8: 32px;  --space-10: 40px;
+  --space-12: 48px; --space-16: 64px;
+
+  /* ─── Border Radius ─────────────────────────────────────── */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-full: 9999px;
+
+  /* ─── Shadows ───────────────────────────────────────────── */
+  --shadow-sm: 0 1px 2px rgba(16,24,40,0.06);
+  --shadow-md: 0 4px 12px rgba(16,24,40,0.08);
+  --shadow-lg: 0 12px 32px rgba(16,24,40,0.12);
+
+  /* ─── Motion ────────────────────────────────────────────── */
+  --duration-instant: 80ms;
+  --duration-fast:    120ms;
+  --duration-base:    200ms;
+  --duration-slow:    320ms;
+  --ease-standard:    cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-decelerate:  cubic-bezier(0, 0, 0.2, 1);
+  --ease-accelerate:  cubic-bezier(0.4, 0, 1, 1);
+
+  /* ─── Z-Index ───────────────────────────────────────────── */
+  --z-base:    0;
+  --z-sticky:  10;
+  --z-dropdown:20;
+  --z-overlay: 30;
+  --z-modal:   40;
+  --z-toast:   50;
+
+  /* ─── Icons ─────────────────────────────────────────────── */
+  --icon-sm: 16px; --icon-md: 20px; --icon-lg: 24px;
+
+  /* ─── Layout ────────────────────────────────────────────── */
+  --sidebar-width: 260px;
+  --sidebar-collapsed: 72px;
+  --navbar-height: 64px;
+}
+
+/* ─── Dark Theme ─────────────────────────────────────────── */
+[data-theme="dark"] {
+  --color-primary:          #818CF8;
+  --color-primary-hover:    #A5B4FC;
+  --color-primary-active:   #6366F1;
+  --color-primary-subtle:   #1E1B4B;
+
+  --color-bg-canvas:        #0F1115;
+  --color-bg-surface:       #1A1D23;
+  --color-bg-surface-raised:#22252C;
+  --color-bg-muted:         #26292F;
+
+  --color-border:           #2E323A;
+  --color-border-strong:    #3D424C;
+
+  --color-text-primary:     #F3F4F6;
+  --color-text-secondary:   #B4B8C0;
+  --color-text-muted:       #787E89;
+  --color-text-on-primary:  #0F1115;
+
+  --color-positive:         #4ADE80;
+  --color-positive-subtle:  #052E16;
+  --color-negative:         #F87171;
+  --color-negative-subtle:  #450A0A;
+  --color-warning:          #FBBF24;
+  --color-warning-subtle:   #451A03;
+  --color-info:             #60A5FA;
+  --color-info-subtle:      #172554;
+
+  --color-cat-food:          #FBBF24;
+  --color-cat-transport:     #60A5FA;
+  --color-cat-shopping:      #F472B6;
+  --color-cat-bills:         #A78BFA;
+  --color-cat-health:        #34D399;
+  --color-cat-entertainment: #FB7185;
+  --color-cat-other:         #9CA3AF;
+
+  --shadow-sm: 0 0 0 1px rgba(255,255,255,0.04);
+  --shadow-md: 0 0 0 1px rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.4);
+  --shadow-lg: 0 0 0 1px rgba(255,255,255,0.08), 0 16px 40px rgba(0,0,0,0.5);
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
