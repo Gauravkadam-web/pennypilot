@@ -1,0 +1,13 @@
+# Environment secrets – NEVER commit these
+.env
+backend/.env
+*.env.local
+*.env.*.local
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
