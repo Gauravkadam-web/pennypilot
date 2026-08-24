@@ -11,6 +11,10 @@ FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
 # Copy nginx template — ${BACKEND_PORT} is substituted at container startup via envsubst
 COPY nginx.conf /etc/nginx/templates/default.conf.template
+
+# Restrict envsubst to ONLY substitute BACKEND_PORT, protecting Nginx variables like $uri
+ENV ENVSUBST_VARS="\$BACKEND_PORT"
+
 EXPOSE 80
 # nginx official image auto-runs envsubst on files in /etc/nginx/templates/
 CMD ["nginx", "-g", "daemon off;"]
