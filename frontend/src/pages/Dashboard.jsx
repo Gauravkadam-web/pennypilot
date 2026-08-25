@@ -1,12 +1,14 @@
 // frontend/src/pages/Dashboard.jsx
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Wallet, Hash, ArrowRight, TrendingUp, Receipt, Calendar } from 'lucide-react';
-import { useExpenses } from '../hooks/useExpenses.js';
+import { Wallet, Hash, ArrowRight, TrendingUp, Receipt, Calendar, PieChart } from 'lucide-react';
+import { useExpenseContext } from '../context/ExpenseContext.jsx';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 import { formatCurrency } from '../utils/formatCurrency.js';
 import { formatDate } from '../utils/formatDate.js';
 import { CATEGORY_MAP } from '../constants/expenseConstants.js';
 import ErrorMessage from '../components/common/ErrorMessage.jsx';
+import CategoryChart from '../components/dashboard/CategoryChart.jsx';
 
 function CategoryBadge({ category }) {
   const cat = CATEGORY_MAP[category] || { label: category, cssClass: 'other' };
@@ -19,7 +21,8 @@ function CategoryBadge({ category }) {
 }
 
 export default function Dashboard() {
-  const { expenses, summary, loading, error, fetchExpenses } = useExpenses();
+  usePageTitle('Dashboard');
+  const { expenses, summary, loading, error, fetchExpenses } = useExpenseContext();
 
   useEffect(() => { fetchExpenses(); }, [fetchExpenses]);
 
@@ -95,6 +98,28 @@ export default function Dashboard() {
             </div>
           )}
           <div className="stat-card__subtext">Average spend per entry</div>
+        </div>
+      </div>
+
+      {/* Charts Row */}
+      <div className="dashboard-charts-row">
+        <div className="card dashboard-chart-card">
+          <div className="card__header">
+            <div>
+              <h2 className="card__title">Spend by Category</h2>
+              <p className="card__subtitle">Distribution across all your expense categories</p>
+            </div>
+            <div className="stat-card__icon stat-card__icon--primary" aria-hidden="true">
+              <PieChart size={18} />
+            </div>
+          </div>
+          {loading ? (
+            <div className="chart-skeleton">
+              <div className="skeleton" style={{ width: '180px', height: '180px', borderRadius: '50%', margin: '0 auto' }} />
+            </div>
+          ) : (
+            <CategoryChart expenses={expenses} />
+          )}
         </div>
       </div>
 

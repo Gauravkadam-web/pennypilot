@@ -1,7 +1,9 @@
 // frontend/src/pages/Expenses.jsx
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Plus, RotateCcw, Filter, Receipt } from 'lucide-react';
-import { useExpenses } from '../hooks/useExpenses.js';
+import { useExpenseContext } from '../context/ExpenseContext.jsx';
+import { useToast } from '../hooks/useToast.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 import ExpenseTable from '../components/expense/ExpenseTable.jsx';
 import ExpenseCard from '../components/expense/ExpenseCard.jsx';
 import ExpenseForm from '../components/expense/ExpenseForm.jsx';
@@ -9,36 +11,41 @@ import Modal from '../components/common/Modal.jsx';
 import Button from '../components/common/Button.jsx';
 import Loader from '../components/common/Loader.jsx';
 import ErrorMessage from '../components/common/ErrorMessage.jsx';
+import Pagination from '../components/common/Pagination.jsx';
 import { EXPENSE_CATEGORIES } from '../constants/expenseConstants.js';
 import { todayAsInputDate } from '../utils/formatDate.js';
 import { formatCurrency } from '../utils/formatCurrency.js';
 
 const EMPTY_FILTERS = { category: '', startDate: '', endDate: '' };
 
-// Simple in-page toast
-function useToast() {
-  const [toasts, setToasts] = useState([]);
-  const show = useCallback((message, type = 'success') => {
-    const id = Date.now();
-    setToasts(t => [...t, { id, message, type }]);
-    setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 4000);
-  }, []);
-  return { toasts, show };
-}
-
 export default function Expenses() {
-  const { expenses, summary, loading, error, fetchExpenses, createExpense, updateExpense, deleteExpense } = useExpenses();
-  const [filters, setFilters]         = useState(EMPTY_FILTERS);
-  const [addOpen, setAddOpen]         = useState(false);
-  const [editTarget, setEditTarget]   = useState(null);
+  usePageTitle('Expenses');
+  const {
+    expenses, summary, loading, error,
+    page, totalPages,
+    fetchExpenses, createExpense, updateExpense, deleteExpense,
+  } = useExpenseContext();
+
+  const [filters, setFilters]           = useState(EMPTY_FILTERS);
+  const [addOpen, setAddOpen]           = useState(false);
+  const [editTarget, setEditTarget]     = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [submitting, setSubmitting]   = useState(false);
+  const [submitting, setSubmitting]     = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const { toasts, show: showToast }   = useToast();
-  const addBtnRef = useRef(null);
+  const { toasts, show: showToast }     = useToast();
+  const addBtnRef                       = useRef(null);
+  const deleteCancelRef                 = useRef(null);
 
   // Initial fetch
   useEffect(() => { fetchExpenses(); }, [fetchExpenses]);
+
+  // Auto-focus the safe (Cancel) button when delete modal opens
+  useEffect(() => {
+    if (deleteTarget) {
+      const t = setTimeout(() => deleteCancelRef.current?.focus(), 50);
+      return () => clearTimeout(t);
+    }
+  }, [deleteTarget]);
 
   function handleFilterChange(e) {
     const { name, value } = e.target;
@@ -46,12 +53,17 @@ export default function Expenses() {
   }
 
   function handleApplyFilters() {
-    fetchExpenses(filters);
+    fetchExpenses(filters, 1);
   }
 
   function handleResetFilters() {
     setFilters(EMPTY_FILTERS);
-    fetchExpenses({});
+    fetchExpenses({}, 1);
+  }
+
+  function handlePageChange(newPage) {
+    fetchExpenses(filters, newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async function handleCreate(data) {
@@ -59,8 +71,13 @@ export default function Expenses() {
     try {
       await createExpense(data);
       setAddOpen(false);
-      fetchExpenses(filters);
+      fetchExpenses(filters, page);
       showToast('Expense added successfully!', 'success');
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || 'Failed to add expense. Please try again.',
+        'error'
+      );
     } finally {
       setSubmitting(false);
     }
@@ -71,8 +88,13 @@ export default function Expenses() {
     try {
       await updateExpense(editTarget.id, data);
       setEditTarget(null);
-      fetchExpenses(filters);
+      fetchExpenses(filters, page);
       showToast('Expense updated successfully!', 'success');
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || 'Failed to update expense. Please try again.',
+        'error'
+      );
     } finally {
       setSubmitting(false);
     }
@@ -83,7 +105,7 @@ export default function Expenses() {
     try {
       await deleteExpense(deleteTarget.id);
       setDeleteTarget(null);
-      fetchExpenses(filters);
+      fetchExpenses(filters, page);
       showToast('Expense deleted successfully.', 'success');
     } catch {
       showToast('Failed to delete expense.', 'error');
@@ -189,8 +211,11 @@ export default function Expenses() {
           error={error}
           onEdit={exp => setEditTarget(exp)}
           onDelete={exp => setDeleteTarget(exp)}
-          onRetry={() => fetchExpenses(filters)}
+          onRetry={() => fetchExpenses(filters, page)}
         />
+        {!loading && !error && (
+          <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
+        )}
       </div>
 
       {/* Mobile: Cards View */}
@@ -208,7 +233,7 @@ export default function Expenses() {
             ))}
           </div>
         ) : error ? (
-          <ErrorMessage message={error} onRetry={() => fetchExpenses(filters)} />
+          <ErrorMessage message={error} onRetry={() => fetchExpenses(filters, page)} />
         ) : expenses.length === 0 ? (
           <div className="card empty-state">
             <Receipt size={36} className="empty-state__icon" aria-hidden="true" />
@@ -216,16 +241,19 @@ export default function Expenses() {
             <p className="empty-state__body">Add your first expense or clear filters.</p>
           </div>
         ) : (
-          <div className="mobile-cards-container">
-            {expenses.map(exp => (
-              <ExpenseCard
-                key={exp.id}
-                expense={exp}
-                onEdit={exp => setEditTarget(exp)}
-                onDelete={exp => setDeleteTarget(exp)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="mobile-cards-container">
+              {expenses.map(exp => (
+                <ExpenseCard
+                  key={exp.id}
+                  expense={exp}
+                  onEdit={exp => setEditTarget(exp)}
+                  onDelete={exp => setDeleteTarget(exp)}
+                />
+              ))}
+            </div>
+            <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
+          </>
         )}
       </div>
 
@@ -274,7 +302,14 @@ export default function Expenses() {
               Are you sure you want to delete <strong>"{deleteTarget.title}"</strong>? This will permanently remove the record from your expenses.
             </p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)' }}>
-              <Button variant="secondary" size="md" onClick={() => setDeleteTarget(null)} id="delete-cancel-btn">
+              {/* Cancel is focused first (safe default) via ref + useEffect */}
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => setDeleteTarget(null)}
+                id="delete-cancel-btn"
+                ref={deleteCancelRef}
+              >
                 Cancel
               </Button>
               <Button variant="destructive" size="md" loading={deleteLoading} onClick={handleDelete} id="delete-confirm-btn">

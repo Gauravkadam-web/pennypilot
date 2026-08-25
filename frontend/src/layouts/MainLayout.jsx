@@ -9,6 +9,30 @@ const NAV_ITEMS = [
   { to: '/expenses', label: 'Expenses',  icon: Receipt,          id: 'nav-expenses' },
 ];
 
+/**
+ * Wrapper around NavLink that correctly applies aria-current.
+ * NavLink's render-prop gives us `isActive`; plain JSX attributes
+ * cannot receive a function, so we use a wrapper component instead.
+ */
+function NavItem({ to, label, icon: Icon, id, end, onClick }) {
+  return (
+    <NavLink
+      to={to}
+      end={end}
+      id={id}
+      onClick={onClick}
+      className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
+    >
+      {({ isActive }) => (
+        <>
+          <Icon size={18} aria-hidden="true" />
+          <span aria-current={isActive ? 'page' : undefined}>{label}</span>
+        </>
+      )}
+    </NavLink>
+  );
+}
+
 export default function MainLayout() {
   const { theme, toggleTheme } = useAppContext();
   const location = useLocation();
@@ -52,18 +76,8 @@ export default function MainLayout() {
 
         <nav className="sidebar__nav" aria-label="App navigation">
           <div className="sidebar__nav-label">Menu</div>
-          {NAV_ITEMS.map(({ to, label, icon: Icon, id, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              id={id}
-              className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
-              aria-current={({ isActive }) => (isActive ? 'page' : undefined)}
-            >
-              <Icon size={18} aria-hidden="true" />
-              {label}
-            </NavLink>
+          {NAV_ITEMS.map((item) => (
+            <NavItem key={item.to} {...item} />
           ))}
         </nav>
 
@@ -120,19 +134,13 @@ export default function MainLayout() {
 
         <nav className="mobile-drawer__nav" aria-label="Mobile menu links">
           <div className="sidebar__nav-label" style={{ paddingLeft: 'var(--space-2)' }}>Menu</div>
-          {NAV_ITEMS.map(({ to, label, icon: Icon, id, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              id={`mobile-${id}`}
-              className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
-              aria-current={({ isActive }) => (isActive ? 'page' : undefined)}
+          {NAV_ITEMS.map((item) => (
+            <NavItem
+              key={item.to}
+              {...item}
+              id={`mobile-${item.id}`}
               onClick={() => setMobileNavOpen(false)}
-            >
-              <Icon size={18} aria-hidden="true" />
-              {label}
-            </NavLink>
+            />
           ))}
         </nav>
 
@@ -161,7 +169,8 @@ export default function MainLayout() {
             >
               <Menu size={20} aria-hidden="true" />
             </button>
-            <h1 className="navbar__title">{pageTitle}</h1>
+            {/* Not an h1 — page already has its own h1. This is just a visual label. */}
+            <p className="navbar__title">{pageTitle}</p>
           </div>
           
           <div className="navbar__actions">

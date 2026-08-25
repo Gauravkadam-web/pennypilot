@@ -1,24 +1,29 @@
 // frontend/src/components/common/Button.jsx
+import { forwardRef } from 'react';
 import { Loader2 } from 'lucide-react';
 
 /**
  * @param {'primary'|'secondary'|'ghost'|'destructive'} variant
  * @param {'sm'|'md'|'lg'} size
  */
-export default function Button({
-  children,
-  variant = 'primary',
-  size = 'md',
-  loading = false,
-  disabled = false,
-  onClick,
-  type = 'button',
-  className = '',
-  id,
-}) {
+const Button = forwardRef(function Button(
+  {
+    children,
+    variant = 'primary',
+    size = 'md',
+    loading = false,
+    disabled = false,
+    onClick,
+    type = 'button',
+    className = '',
+    id,
+  },
+  ref
+) {
   const isDisabled = disabled || loading;
   return (
     <button
+      ref={ref}
       id={id}
       type={type}
       className={`btn btn--${variant} btn--${size} ${isDisabled ? 'btn--disabled' : ''} ${className}`}
@@ -31,4 +36,6 @@ export default function Button({
       {children}
     </button>
   );
-}
+});
+
+export default Button;
