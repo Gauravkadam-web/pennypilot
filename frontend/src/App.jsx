@@ -10,7 +10,7 @@ import Loader from './components/common/Loader.jsx';
 // Lazy-load all pages for better initial bundle size
 const Dashboard = lazy(() => import('./pages/Dashboard.jsx'));
 const Expenses  = lazy(() => import('./pages/Expenses.jsx'));
-const Settings  = lazy(() => import('./pages/Settings.jsx'));
+const Categories = lazy(() => import('./pages/Categories.jsx'));
 const NotFound  = lazy(() => import('./pages/NotFound.jsx'));
 
 import './styles/index.css';
@@ -35,7 +35,7 @@ export default function App() {
                 <Route element={<MainLayout />}>
                   <Route index element={<Dashboard />} />
                   <Route path="expenses" element={<Expenses />} />
-                  <Route path="settings" element={<Settings />} />
+                  <Route path="categories" element={<Categories />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>

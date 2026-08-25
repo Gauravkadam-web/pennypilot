@@ -10,8 +10,8 @@ import CategoryForm from '../components/category/CategoryForm.jsx';
 import Modal from '../components/common/Modal.jsx';
 import Button from '../components/common/Button.jsx';
 
-export default function Settings() {
-  usePageTitle('Settings');
+export default function Categories() {
+  usePageTitle('Categories');
 
   const {
     categories, loading, error,
@@ -84,7 +84,7 @@ export default function Settings() {
       {/* Page Header */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">Settings</h1>
+          <h1 className="page-title">Categories</h1>
           <p className="page-subtitle">Manage your custom expense categories</p>
         </div>
         <Button variant="primary" size="md" onClick={() => setAddOpen(true)} id="add-category-btn">
