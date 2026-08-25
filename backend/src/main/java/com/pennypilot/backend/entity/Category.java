@@ -19,9 +19,9 @@ public class Category {
     @Column(nullable = false, length = 60)
     private String label;
 
-    /** Hex colour for UI (e.g. "#F59E0B") */
-    @Column(nullable = false, length = 7)
-    private String color;
+    /** Lucide icon name (e.g. "Utensils") */
+    @Column(nullable = false, length = 50)
+    private String icon;
 
     /** True for the 7 seeded defaults; default categories cannot be deleted */
     @Column(name = "is_default", nullable = false)
@@ -57,8 +57,8 @@ public class Category {
     public String getLabel() { return label; }
     public void setLabel(String label) { this.label = label; }
 
-    public String getColor() { return color; }
-    public void setColor(String color) { this.color = color; }
+    public String getIcon() { return icon; }
+    public void setIcon(String icon) { this.icon = icon; }
 
     public boolean isDefault() { return isDefault; }
     public void setDefault(boolean aDefault) { isDefault = aDefault; }

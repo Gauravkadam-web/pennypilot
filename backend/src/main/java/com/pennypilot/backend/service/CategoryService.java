@@ -46,7 +46,7 @@ public class CategoryService {
         Category category = new Category();
         category.setName(name);
         category.setLabel(request.getLabel().trim());
-        category.setColor(request.getColor());
+        category.setIcon(request.getIcon());
         category.setDefault(false);
 
         return toResponse(categoryRepository.save(category));
@@ -59,7 +59,7 @@ public class CategoryService {
                         "Category not found with id: " + id));
 
         category.setLabel(request.getLabel().trim());
-        category.setColor(request.getColor());
+        category.setIcon(request.getIcon());
 
         return toResponse(categoryRepository.save(category));
     }
@@ -93,7 +93,7 @@ public class CategoryService {
         response.setId(category.getId());
         response.setName(category.getName());
         response.setLabel(category.getLabel());
-        response.setColor(category.getColor());
+        response.setIcon(category.getIcon());
         response.setDefault(category.isDefault());
         response.setCreatedAt(category.getCreatedAt());
         response.setUpdatedAt(category.getUpdatedAt());

@@ -4,13 +4,14 @@
 
 import { useState } from 'react';
 import { AlertCircle, Check } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import Button from '../common/Button.jsx';
 
-// 12 preset color swatches for easy selection
-const COLOR_PALETTE = [
-  '#F59E0B', '#EF4444', '#EC4899', '#F43F5E',
-  '#8B5CF6', '#6366F1', '#3B82F6', '#06B6D4',
-  '#10B981', '#22C55E', '#84CC16', '#6B7280',
+// Preset icon palette
+const ICON_PALETTE = [
+  'Utensils', 'Bus', 'ShoppingBag', 'FileText',
+  'HeartPulse', 'Film', 'Tag', 'Briefcase',
+  'Coffee', 'Home', 'Zap', 'Gift',
 ];
 
 function validate(form, isEdit) {
@@ -23,7 +24,7 @@ function validate(form, isEdit) {
   }
   if (!form.label.trim()) errors.label = 'Label is required';
   else if (form.label.length > 60) errors.label = 'Max 60 characters';
-  if (!form.color) errors.color = 'Please select a colour';
+  if (!form.icon) errors.icon = 'Please select an icon';
   return errors;
 }
 
@@ -39,7 +40,7 @@ export default function CategoryForm({ initialData = null, onSubmit, onCancel, s
   const [form, setForm] = useState({
     name:  initialData?.name  ?? '',
     label: initialData?.label ?? '',
-    color: initialData?.color ?? COLOR_PALETTE[0],
+    icon: initialData?.icon ?? ICON_PALETTE[0],
   });
   const [errors, setErrors]     = useState({});
   const [apiError, setApiError] = useState('');
@@ -50,9 +51,9 @@ export default function CategoryForm({ initialData = null, onSubmit, onCancel, s
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   }
 
-  function selectColor(hex) {
-    setForm(prev => ({ ...prev, color: hex }));
-    if (errors.color) setErrors(prev => ({ ...prev, color: '' }));
+  function selectIcon(iconName) {
+    setForm(prev => ({ ...prev, icon: iconName }));
+    if (errors.icon) setErrors(prev => ({ ...prev, icon: '' }));
   }
 
   async function handleSubmit(e) {
@@ -65,12 +66,14 @@ export default function CategoryForm({ initialData = null, onSubmit, onCancel, s
       await onSubmit({
         name:  form.name.toUpperCase().trim(),
         label: form.label.trim(),
-        color: form.color,
+        icon: form.icon,
       });
     } catch (err) {
       setApiError(err.response?.data?.message || 'Failed to save category. Please try again.');
     }
   }
+
+  const PreviewIcon = Icons[form.icon] || Icons.Tag;
 
   return (
     <form onSubmit={handleSubmit} noValidate id="category-form">
@@ -120,32 +123,34 @@ export default function CategoryForm({ initialData = null, onSubmit, onCancel, s
         {errors.label && <span className="form-error"><AlertCircle size={12} aria-hidden="true" />{errors.label}</span>}
       </div>
 
-      {/* Color picker */}
+      {/* Icon picker */}
       <div className="form-group">
-        <label className="form-label form-label--required">Colour</label>
-        <div className="color-palette" role="group" aria-label="Select category colour">
-          {COLOR_PALETTE.map(hex => (
-            <button
-              key={hex}
-              type="button"
-              className={`color-swatch${form.color === hex ? ' color-swatch--selected' : ''}`}
-              style={{ backgroundColor: hex }}
-              onClick={() => selectColor(hex)}
-              aria-label={`Select colour ${hex}`}
-              aria-pressed={form.color === hex}
-              title={hex}
-            >
-              {form.color === hex && <Check size={12} color="#fff" strokeWidth={3} />}
-            </button>
-          ))}
+        <label className="form-label form-label--required">Icon</label>
+        <div className="color-palette" role="group" aria-label="Select category icon">
+          {ICON_PALETTE.map(iconName => {
+            const IconComp = Icons[iconName] || Icons.Tag;
+            return (
+              <button
+                key={iconName}
+                type="button"
+                className={`color-swatch${form.icon === iconName ? ' color-swatch--selected' : ''}`}
+                onClick={() => selectIcon(iconName)}
+                aria-label={`Select icon ${iconName}`}
+                aria-pressed={form.icon === iconName}
+                title={iconName}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', color: form.icon === iconName ? 'var(--color-primary)' : 'var(--color-text-secondary)' }}
+              >
+                <IconComp size={18} />
+              </button>
+            );
+          })}
         </div>
-        {errors.color && <span className="form-error"><AlertCircle size={12} aria-hidden="true" />{errors.color}</span>}
-        {/* Preview badge */}
-        <div className="cat-preview">
-          <span className="badge" style={{ backgroundColor: `${form.color}22`, color: form.color }}>
-            <span className="badge__dot" style={{ backgroundColor: form.color }} />
-            {form.label || 'Preview'}
-          </span>
+        {errors.icon && <span className="form-error"><AlertCircle size={12} aria-hidden="true" />{errors.icon}</span>}
+        
+        {/* Preview */}
+        <div className="cat-preview" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+          <PreviewIcon size={18} />
+          <span>{form.label || 'Preview'}</span>
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 // frontend/src/components/expense/ExpenseTable.jsx
 import { Pencil, Trash2, Receipt } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import { useCategoryContext } from '../../context/CategoryContext.jsx';
 import { formatCurrency } from '../../utils/formatCurrency.js';
 import { formatDate } from '../../utils/formatDate.js';
@@ -8,12 +9,13 @@ import ErrorMessage from '../common/ErrorMessage.jsx';
 
 function CategoryBadge({ category }) {
   const { categoryMap } = useCategoryContext();
-  const cat = categoryMap[category] || { label: category, color: '#6B7280' };
+  const cat = categoryMap[category] || { label: category, icon: 'Tag' };
   const cssClass = (category || 'other').toLowerCase();
+  const IconComp = Icons[cat.icon] || Icons.Tag;
 
   return (
-    <span className={`badge badge--${cssClass}`} title={cat.label}>
-      <span className="badge__dot" style={{ backgroundColor: cat.color || `var(--color-cat-${cssClass})` }} aria-hidden="true" />
+    <span className={`badge badge--${cssClass}`} title={cat.label} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: 'transparent', border: '1px solid var(--color-border)', padding: '4px 8px' }}>
+      <IconComp size={14} style={{ color: 'var(--color-text-secondary)' }} aria-hidden="true" />
       {cat.label}
     </span>
   );

@@ -38,9 +38,15 @@ function CustomTooltip({ active, payload }) {
   );
 }
 
+const CHART_COLORS = [
+  '#F59E0B', '#3B82F6', '#EC4899', '#8B5CF6', 
+  '#10B981', '#F43F5E', '#06B6D4', '#EAB308',
+  '#6366F1', '#14B8A6', '#84CC16', '#A855F7',
+];
+
 /**
  * @param {Array}  expenses     Expense objects with .category and .amount
- * @param {Object} categoryMap  name → { label, color } from CategoryContext
+ * @param {Object} categoryMap  name → { label, icon } from CategoryContext
  */
 export default function CategoryChart({ expenses, categoryMap = {} }) {
   // Aggregate spend per category
@@ -50,14 +56,14 @@ export default function CategoryChart({ expenses, categoryMap = {} }) {
     dataMap[key] = (dataMap[key] || 0) + parseFloat(exp.amount);
   }
 
-  // Build chart data using dynamic colors from categoryMap
+  // Build chart data
   const data = Object.entries(dataMap)
-    .map(([name, value]) => {
+    .map(([name, value], index) => {
       const cat = categoryMap[name];
       return {
         name:  cat?.label || name,
         value,
-        color: cat?.color || '#6B7280',
+        color: CHART_COLORS[index % CHART_COLORS.length],
       };
     })
     .filter(d => d.value > 0)

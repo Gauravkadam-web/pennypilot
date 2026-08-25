@@ -33,24 +33,24 @@ public class DataSeeder implements CommandLineRunner {
         }
 
         List<Category> defaults = List.of(
-            seed("FOOD",          "Food",          "#F59E0B"),
-            seed("TRANSPORT",     "Transport",     "#3B82F6"),
-            seed("SHOPPING",      "Shopping",      "#EC4899"),
-            seed("BILLS",         "Bills",         "#8B5CF6"),
-            seed("HEALTH",        "Health",        "#10B981"),
-            seed("ENTERTAINMENT", "Entertainment", "#F43F5E"),
-            seed("OTHER",         "Other",         "#6B7280")
+            seed("FOOD",          "Food",          "Utensils"),
+            seed("TRANSPORT",     "Transport",     "Bus"),
+            seed("SHOPPING",      "Shopping",      "ShoppingBag"),
+            seed("BILLS",         "Bills",         "FileText"),
+            seed("HEALTH",        "Health",        "HeartPulse"),
+            seed("ENTERTAINMENT", "Entertainment", "Film"),
+            seed("OTHER",         "Other",         "Tag")
         );
 
         categoryRepository.saveAll(defaults);
         log.info("Seeded {} default categories.", defaults.size());
     }
 
-    private Category seed(String name, String label, String color) {
+    private Category seed(String name, String label, String icon) {
         Category c = new Category();
         c.setName(name);
         c.setLabel(label);
-        c.setColor(color);
+        c.setIcon(icon);
         c.setDefault(true);
         return c;
     }

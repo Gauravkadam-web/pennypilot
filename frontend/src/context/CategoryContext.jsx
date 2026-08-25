@@ -7,13 +7,13 @@ import { categoryService } from '../services/categoryService.js';
 
 // Fallback palette while loading (matches the seeded defaults)
 const FALLBACK_CATEGORIES = [
-  { id: null, name: 'FOOD',          label: 'Food',          color: '#F59E0B', isDefault: true },
-  { id: null, name: 'TRANSPORT',     label: 'Transport',     color: '#3B82F6', isDefault: true },
-  { id: null, name: 'SHOPPING',      label: 'Shopping',      color: '#EC4899', isDefault: true },
-  { id: null, name: 'BILLS',         label: 'Bills',         color: '#8B5CF6', isDefault: true },
-  { id: null, name: 'HEALTH',        label: 'Health',        color: '#10B981', isDefault: true },
-  { id: null, name: 'ENTERTAINMENT', label: 'Entertainment', color: '#F43F5E', isDefault: true },
-  { id: null, name: 'OTHER',         label: 'Other',         color: '#6B7280', isDefault: true },
+  { id: null, name: 'FOOD',          label: 'Food',          icon: 'Utensils',    isDefault: true },
+  { id: null, name: 'TRANSPORT',     label: 'Transport',     icon: 'Bus',         isDefault: true },
+  { id: null, name: 'SHOPPING',      label: 'Shopping',      icon: 'ShoppingBag', isDefault: true },
+  { id: null, name: 'BILLS',         label: 'Bills',         icon: 'FileText',    isDefault: true },
+  { id: null, name: 'HEALTH',        label: 'Health',        icon: 'HeartPulse',  isDefault: true },
+  { id: null, name: 'ENTERTAINMENT', label: 'Entertainment', icon: 'Film',        isDefault: true },
+  { id: null, name: 'OTHER',         label: 'Other',         icon: 'Tag',         isDefault: true },
 ];
 
 const CategoryContext = createContext(null);

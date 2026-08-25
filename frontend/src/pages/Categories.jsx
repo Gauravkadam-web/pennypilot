@@ -3,6 +3,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Tag, Lock, AlertTriangle } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import { useCategoryContext } from '../context/CategoryContext.jsx';
 import { useToast } from '../hooks/useToast.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
@@ -127,10 +128,12 @@ export default function Categories() {
           </div>
         ) : (
           <div className="settings-list">
-            {customCategories.map(cat => (
+            {customCategories.map(cat => {
+              const IconComp = Icons[cat.icon] || Icons.Tag;
+              return (
               <div key={cat.id} className="settings-list__row">
                 <div className="settings-list__left">
-                  <span className="cat-color-dot" style={{ backgroundColor: cat.color }} />
+                  <IconComp size={16} className="cat-icon" />
                   <span className="settings-list__label">{cat.label}</span>
                   <span className="settings-list__name-key">{cat.name}</span>
                 </div>
@@ -155,7 +158,7 @@ export default function Categories() {
                   </button>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         )}
       </div>
@@ -171,10 +174,12 @@ export default function Categories() {
         </div>
 
         <div className="settings-list">
-          {defaultCategories.map(cat => (
+          {defaultCategories.map(cat => {
+            const IconComp = Icons[cat.icon] || Icons.Tag;
+            return (
             <div key={cat.id ?? cat.name} className="settings-list__row">
               <div className="settings-list__left">
-                <span className="cat-color-dot" style={{ backgroundColor: cat.color }} />
+                <IconComp size={16} className="cat-icon" />
                 <span className="settings-list__label">{cat.label}</span>
                 <span className="settings-list__name-key">{cat.name}</span>
               </div>
@@ -195,7 +200,7 @@ export default function Categories() {
                 </span>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       </div>
 

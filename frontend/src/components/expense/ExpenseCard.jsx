@@ -1,14 +1,16 @@
 // frontend/src/components/expense/ExpenseCard.jsx
 // Mobile card view for a single expense
 import { Pencil, Trash2, Calendar } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import { useCategoryContext } from '../../context/CategoryContext.jsx';
 import { formatCurrency } from '../../utils/formatCurrency.js';
 import { formatDate } from '../../utils/formatDate.js';
 
 export default function ExpenseCard({ expense, onEdit, onDelete }) {
   const { categoryMap } = useCategoryContext();
-  const cat = categoryMap[expense.category] || { label: expense.category, color: '#6B7280' };
+  const cat = categoryMap[expense.category] || { label: expense.category, icon: 'Tag' };
   const cssClass = (expense.category || 'other').toLowerCase();
+  const IconComp = Icons[cat.icon] || Icons.Tag;
 
   return (
     <div className="expense-card">
@@ -26,8 +28,8 @@ export default function ExpenseCard({ expense, onEdit, onDelete }) {
 
       <div className="expense-card__footer">
         <div className="expense-card__meta">
-          <span className={`badge badge--${cssClass}`}>
-            <span className="badge__dot" style={{ backgroundColor: cat.color || `var(--color-cat-${cssClass})` }} aria-hidden="true" />
+          <span className={`badge badge--${cssClass}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: 'transparent', border: '1px solid var(--color-border)', padding: '4px 8px' }}>
+            <IconComp size={14} style={{ color: 'var(--color-text-secondary)' }} aria-hidden="true" />
             {cat.label}
           </span>
           <span className="expense-card__date">
