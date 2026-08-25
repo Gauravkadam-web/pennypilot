@@ -27,8 +27,25 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (categoryRepository.count() > 0) {
-            log.info("Categories already seeded — skipping.");
+        long count = categoryRepository.count();
+        if (count > 0) {
+            log.info("Categories already seeded — checking for missing icons.");
+            List<Category> all = categoryRepository.findAll();
+            for (Category c : all) {
+                if (c.getIcon() == null || c.getIcon().isEmpty()) {
+                    switch (c.getName()) {
+                        case "FOOD": c.setIcon("Utensils"); break;
+                        case "TRANSPORT": c.setIcon("Bus"); break;
+                        case "SHOPPING": c.setIcon("ShoppingBag"); break;
+                        case "BILLS": c.setIcon("FileText"); break;
+                        case "HEALTH": c.setIcon("HeartPulse"); break;
+                        case "ENTERTAINMENT": c.setIcon("Film"); break;
+                        case "OTHER": c.setIcon("Tag"); break;
+                        default: c.setIcon("Tag"); break;
+                    }
+                    categoryRepository.save(c);
+                }
+            }
             return;
         }
 
