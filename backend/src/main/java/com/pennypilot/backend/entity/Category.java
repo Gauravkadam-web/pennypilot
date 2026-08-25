@@ -20,7 +20,7 @@ public class Category {
     private String label;
 
     /** Lucide icon name (e.g. "Utensils") */
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, columnDefinition = "varchar(50) default 'Tag'")
     private String icon;
 
     /** True for the 7 seeded defaults; default categories cannot be deleted */

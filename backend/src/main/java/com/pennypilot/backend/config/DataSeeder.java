@@ -32,7 +32,8 @@ public class DataSeeder implements CommandLineRunner {
             log.info("Categories already seeded — checking for missing icons.");
             List<Category> all = categoryRepository.findAll();
             for (Category c : all) {
-                if (c.getIcon() == null || c.getIcon().isEmpty()) {
+                boolean needsIcon = c.getIcon() == null || c.getIcon().isEmpty() || "Tag".equals(c.getIcon());
+                if (needsIcon) {
                     switch (c.getName()) {
                         case "FOOD": c.setIcon("Utensils"); break;
                         case "TRANSPORT": c.setIcon("Bus"); break;
