@@ -1,16 +1,19 @@
 // frontend/src/components/expense/ExpenseTable.jsx
 import { Pencil, Trash2, Receipt } from 'lucide-react';
-import { CATEGORY_MAP } from '../../constants/expenseConstants.js';
+import { useCategoryContext } from '../../context/CategoryContext.jsx';
 import { formatCurrency } from '../../utils/formatCurrency.js';
 import { formatDate } from '../../utils/formatDate.js';
 import Loader from '../common/Loader.jsx';
 import ErrorMessage from '../common/ErrorMessage.jsx';
 
 function CategoryBadge({ category }) {
-  const cat = CATEGORY_MAP[category] || { label: category, cssClass: 'other' };
+  const { categoryMap } = useCategoryContext();
+  const cat = categoryMap[category] || { label: category, color: '#6B7280' };
+  const cssClass = (category || 'other').toLowerCase();
+
   return (
-    <span className={`badge badge--${cat.cssClass}`} title={cat.label}>
-      <span className="badge__dot" style={{ backgroundColor: `var(--color-cat-${cat.cssClass})` }} aria-hidden="true" />
+    <span className={`badge badge--${cssClass}`} title={cat.label}>
+      <span className="badge__dot" style={{ backgroundColor: cat.color || `var(--color-cat-${cssClass})` }} aria-hidden="true" />
       {cat.label}
     </span>
   );

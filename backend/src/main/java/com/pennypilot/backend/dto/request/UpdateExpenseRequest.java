@@ -1,6 +1,5 @@
 package com.pennypilot.backend.dto.request;
 
-import com.pennypilot.backend.enums.ExpenseCategory;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,8 +15,9 @@ public class UpdateExpenseRequest {
     @Digits(integer = 10, fraction = 2, message = "Amount can have up to 2 decimal places")
     private BigDecimal amount;
 
-    @NotNull(message = "Category is required")
-    private ExpenseCategory category;
+    @NotBlank(message = "Category is required")
+    @Size(max = 50, message = "Category must not exceed 50 characters")
+    private String category;
 
     @NotNull(message = "Expense date is required")
     @PastOrPresent(message = "Expense date must not be in the future")
@@ -42,13 +42,8 @@ public class UpdateExpenseRequest {
         this.amount = amount;
     }
 
-    public ExpenseCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(ExpenseCategory category) {
-        this.category = category;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
     public LocalDate getExpenseDate() {
         return expenseDate;

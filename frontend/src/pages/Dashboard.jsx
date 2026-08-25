@@ -3,18 +3,19 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Wallet, Hash, ArrowRight, TrendingUp, Receipt, Calendar, PieChart } from 'lucide-react';
 import { useExpenseContext } from '../context/ExpenseContext.jsx';
+import { useCategoryContext } from '../context/CategoryContext.jsx';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 import { formatCurrency } from '../utils/formatCurrency.js';
 import { formatDate } from '../utils/formatDate.js';
-import { CATEGORY_MAP } from '../constants/expenseConstants.js';
 import ErrorMessage from '../components/common/ErrorMessage.jsx';
 import CategoryChart from '../components/dashboard/CategoryChart.jsx';
 
-function CategoryBadge({ category }) {
-  const cat = CATEGORY_MAP[category] || { label: category, cssClass: 'other' };
+function CategoryBadge({ category, categoryMap }) {
+  const cat = categoryMap[category] || { label: category, color: '#6B7280', name: 'other' };
+  const cssClass = cat.name?.toLowerCase() || 'other';
   return (
-    <span className={`badge badge--${cat.cssClass}`} title={cat.label}>
-      <span className="badge__dot" style={{ backgroundColor: `var(--color-cat-${cat.cssClass})` }} aria-hidden="true" />
+    <span className={`badge badge--${cssClass}`} title={cat.label}>
+      <span className="badge__dot" style={{ backgroundColor: cat.color }} aria-hidden="true" />
       {cat.label}
     </span>
   );
@@ -23,6 +24,7 @@ function CategoryBadge({ category }) {
 export default function Dashboard() {
   usePageTitle('Dashboard');
   const { expenses, summary, loading, error, fetchExpenses } = useExpenseContext();
+  const { categoryMap } = useCategoryContext();
 
   useEffect(() => { fetchExpenses(); }, [fetchExpenses]);
 
@@ -118,7 +120,7 @@ export default function Dashboard() {
               <div className="skeleton" style={{ width: '180px', height: '180px', borderRadius: '50%', margin: '0 auto' }} />
             </div>
           ) : (
-            <CategoryChart expenses={expenses} />
+            <CategoryChart expenses={expenses} categoryMap={categoryMap} />
           )}
         </div>
       </div>
@@ -186,7 +188,7 @@ export default function Dashboard() {
                           </div>
                         </td>
                         <td>
-                          <CategoryBadge category={exp.category} />
+                          <CategoryBadge category={exp.category} categoryMap={categoryMap} />
                         </td>
                         <td>
                           <span className="table__date-text">{formatDate(exp.expenseDate)}</span>
@@ -205,7 +207,7 @@ export default function Dashboard() {
             <div className="mobile-cards-view">
               <div className="mobile-cards-container">
                 {recentExpenses.map(exp => {
-                  const cat = CATEGORY_MAP[exp.category] || { label: exp.category, cssClass: 'other' };
+                  const cat = categoryMap[exp.category] || { label: exp.category, color: '#6B7280' };
                   return (
                     <div key={exp.id} className="expense-card">
                       <div className="expense-card__header">
@@ -221,8 +223,8 @@ export default function Dashboard() {
                       </div>
                       <div className="expense-card__footer">
                         <div className="expense-card__meta">
-                          <span className={`badge badge--${cat.cssClass}`}>
-                            <span className="badge__dot" style={{ backgroundColor: `var(--color-cat-${cat.cssClass})` }} aria-hidden="true" />
+                          <span className="badge" style={{ backgroundColor: `${cat.color}22`, color: cat.color }}>
+                            <span className="badge__dot" style={{ backgroundColor: cat.color }} aria-hidden="true" />
                             {cat.label}
                           </span>
                           <span className="expense-card__date">

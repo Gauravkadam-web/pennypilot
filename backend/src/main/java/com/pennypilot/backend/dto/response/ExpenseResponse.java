@@ -1,6 +1,5 @@
 package com.pennypilot.backend.dto.response;
 
-import com.pennypilot.backend.enums.ExpenseCategory;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -10,7 +9,7 @@ public class ExpenseResponse {
     private Long id;
     private String title;
     private BigDecimal amount;
-    private ExpenseCategory category;
+    private String category;
     private LocalDate expenseDate;
     private String description;
     private OffsetDateTime createdAt;
@@ -40,13 +39,8 @@ public class ExpenseResponse {
         this.amount = amount;
     }
 
-    public ExpenseCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(ExpenseCategory category) {
-        this.category = category;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
     public LocalDate getExpenseDate() {
         return expenseDate;

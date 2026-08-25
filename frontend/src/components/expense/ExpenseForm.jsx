@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { AlertCircle } from 'lucide-react';
 import Button from '../common/Button.jsx';
-import { EXPENSE_CATEGORIES } from '../../constants/expenseConstants.js';
+import { useCategoryContext } from '../../context/CategoryContext.jsx';
 import { todayAsInputDate } from '../../utils/formatDate.js';
 
 const EMPTY_FORM = {
@@ -27,6 +27,7 @@ function validate(form) {
 }
 
 export default function ExpenseForm({ initialData = null, onSubmit, onCancel, submitting = false }) {
+  const { categories } = useCategoryContext();
   const [form, setForm] = useState(
     initialData
       ? {
@@ -119,8 +120,8 @@ export default function ExpenseForm({ initialData = null, onSubmit, onCancel, su
             onChange={handleChange}
           >
             <option value="">Select category</option>
-            {EXPENSE_CATEGORIES.map(c => (
-              <option key={c.value} value={c.value}>{c.label}</option>
+            {categories.map(c => (
+              <option key={c.name} value={c.name}>{c.label}</option>
             ))}
           </select>
           {errors.category && <span className="form-error"><AlertCircle size={12} aria-hidden="true" />{errors.category}</span>}

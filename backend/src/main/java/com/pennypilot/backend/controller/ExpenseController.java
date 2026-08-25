@@ -4,7 +4,6 @@ import com.pennypilot.backend.dto.request.CreateExpenseRequest;
 import com.pennypilot.backend.dto.request.UpdateExpenseRequest;
 import com.pennypilot.backend.dto.response.ExpenseResponse;
 import com.pennypilot.backend.dto.response.ExpenseSummaryResponse;
-import com.pennypilot.backend.enums.ExpenseCategory;
 import com.pennypilot.backend.service.ExpenseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -32,10 +31,9 @@ public class ExpenseController {
 
     @GetMapping
     public ResponseEntity<List<ExpenseResponse>> getExpenses(
-            @RequestParam(required = false) ExpenseCategory category,
+            @RequestParam(required = false) String category,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate) {
-        
         List<ExpenseResponse> response = expenseService.getExpenses(category, startDate, endDate);
         return ResponseEntity.ok(response);
     }
@@ -63,10 +61,9 @@ public class ExpenseController {
 
     @GetMapping("/summary")
     public ResponseEntity<ExpenseSummaryResponse> getExpenseSummary(
-            @RequestParam(required = false) ExpenseCategory category,
+            @RequestParam(required = false) String category,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate) {
-        
         ExpenseSummaryResponse response = expenseService.getExpenseSummary(category, startDate, endDate);
         return ResponseEntity.ok(response);
     }

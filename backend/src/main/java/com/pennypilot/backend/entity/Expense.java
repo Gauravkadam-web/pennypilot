@@ -1,6 +1,5 @@
 package com.pennypilot.backend.entity;
 
-import com.pennypilot.backend.enums.ExpenseCategory;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,9 +19,8 @@ public class Expense {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
-    private ExpenseCategory category;
+    @Column(nullable = false, length = 50)
+    private String category;
 
     @Column(name = "expense_date", nullable = false)
     private LocalDate expenseDate;
@@ -74,11 +72,11 @@ public class Expense {
         this.amount = amount;
     }
 
-    public ExpenseCategory getCategory() {
+    public String getCategory() {
         return category;
     }
 
-    public void setCategory(ExpenseCategory category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 

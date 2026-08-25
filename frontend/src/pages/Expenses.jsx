@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Plus, RotateCcw, Filter, Receipt } from 'lucide-react';
 import { useExpenseContext } from '../context/ExpenseContext.jsx';
+import { useCategoryContext } from '../context/CategoryContext.jsx';
 import { useToast } from '../hooks/useToast.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 import ExpenseTable from '../components/expense/ExpenseTable.jsx';
@@ -12,7 +13,6 @@ import Button from '../components/common/Button.jsx';
 import Loader from '../components/common/Loader.jsx';
 import ErrorMessage from '../components/common/ErrorMessage.jsx';
 import Pagination from '../components/common/Pagination.jsx';
-import { EXPENSE_CATEGORIES } from '../constants/expenseConstants.js';
 import { todayAsInputDate } from '../utils/formatDate.js';
 import { formatCurrency } from '../utils/formatCurrency.js';
 
@@ -26,6 +26,7 @@ export default function Expenses() {
     fetchExpenses, createExpense, updateExpense, deleteExpense,
   } = useExpenseContext();
 
+  const { categories } = useCategoryContext();
   const [filters, setFilters]           = useState(EMPTY_FILTERS);
   const [addOpen, setAddOpen]           = useState(false);
   const [editTarget, setEditTarget]     = useState(null);
@@ -159,8 +160,8 @@ export default function Expenses() {
               onChange={handleFilterChange}
             >
               <option value="">All Categories</option>
-              {EXPENSE_CATEGORIES.map(c => (
-                <option key={c.value} value={c.value}>{c.label}</option>
+              {categories.map(c => (
+                <option key={c.name} value={c.name}>{c.label}</option>
               ))}
             </select>
           </div>

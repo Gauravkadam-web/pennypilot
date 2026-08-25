@@ -1,27 +1,15 @@
 // frontend/src/components/dashboard/CategoryChart.jsx
-// Donut chart: category-wise spend breakdown using Recharts
+// Donut chart: category-wise spend breakdown using Recharts + dynamic colors from CategoryContext
 
 import {
   PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
-import { EXPENSE_CATEGORIES } from '../../constants/expenseConstants.js';
 import { formatCurrency } from '../../utils/formatCurrency.js';
-
-// Map each category to its CSS variable colour value
-const CAT_COLORS = {
-  FOOD:          '#F59E0B',
-  TRANSPORT:     '#3B82F6',
-  SHOPPING:      '#EC4899',
-  BILLS:         '#8B5CF6',
-  HEALTH:        '#10B981',
-  ENTERTAINMENT: '#F43F5E',
-  OTHER:         '#6B7280',
-};
 
 const RADIAN = Math.PI / 180;
 
 function CustomLabel({ cx, cy, midAngle, innerRadius, outerRadius, percent }) {
-  if (percent < 0.05) return null; // hide tiny labels
+  if (percent < 0.05) return null;
   const r   = innerRadius + (outerRadius - innerRadius) * 0.5;
   const x   = cx + r * Math.cos(-midAngle * RADIAN);
   const y   = cy + r * Math.sin(-midAngle * RADIAN);
@@ -51,9 +39,10 @@ function CustomTooltip({ active, payload }) {
 }
 
 /**
- * @param {Array<{category: string, amount: number|string}>} expenses
+ * @param {Array}  expenses     Expense objects with .category and .amount
+ * @param {Object} categoryMap  name → { label, color } from CategoryContext
  */
-export default function CategoryChart({ expenses }) {
+export default function CategoryChart({ expenses, categoryMap = {} }) {
   // Aggregate spend per category
   const dataMap = {};
   for (const exp of expenses) {
@@ -61,12 +50,16 @@ export default function CategoryChart({ expenses }) {
     dataMap[key] = (dataMap[key] || 0) + parseFloat(exp.amount);
   }
 
-  const data = EXPENSE_CATEGORIES
-    .map(cat => ({
-      name:  cat.label,
-      value: dataMap[cat.value] || 0,
-      color: CAT_COLORS[cat.value] || '#6B7280',
-    }))
+  // Build chart data using dynamic colors from categoryMap
+  const data = Object.entries(dataMap)
+    .map(([name, value]) => {
+      const cat = categoryMap[name];
+      return {
+        name:  cat?.label || name,
+        value,
+        color: cat?.color || '#6B7280',
+      };
+    })
     .filter(d => d.value > 0)
     .sort((a, b) => b.value - a.value);
 

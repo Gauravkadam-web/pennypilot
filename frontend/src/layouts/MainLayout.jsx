@@ -1,12 +1,13 @@
 // frontend/src/layouts/MainLayout.jsx
 import { useState, useEffect } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Receipt, Moon, Sun, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Receipt, Moon, Sun, Menu, X, Settings } from 'lucide-react';
 import { useAppContext } from '../context/AppContext.jsx';
 
 const NAV_ITEMS = [
   { to: '/',         label: 'Dashboard', icon: LayoutDashboard, id: 'nav-dashboard', end: true },
   { to: '/expenses', label: 'Expenses',  icon: Receipt,          id: 'nav-expenses' },
+  { to: '/settings', label: 'Settings',  icon: Settings,         id: 'nav-settings' },
 ];
 
 /**
